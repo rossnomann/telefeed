@@ -42,3 +42,14 @@ class Channel(Base):
         sa.Column('id', sa.Integer(), primary_key=True),
         sa.Column('name', sa.String(), unique=True, nullable=False),
     )
+
+
+class Feed(Base):
+    table = sa.Table(
+        'feed',
+        metadata,
+        sa.Column('id', sa.Integer(), primary_key=True),
+        sa.Column('channel_id', sa.ForeignKey('channel.id')),
+        sa.Column('url', sa.String()),
+        sa.UniqueConstraint('channel_id', 'url', name='feed_channel_url_uc')
+    )
