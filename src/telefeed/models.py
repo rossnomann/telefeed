@@ -53,8 +53,19 @@ class Feed(Base):
         sa.Column('id', sa.Integer(), primary_key=True),
         sa.Column('channel_id', sa.ForeignKey('channel.id')),
         sa.Column('url', sa.String()),
+        sa.Column('updated_at', sa.Integer(), default=0),
         sa.UniqueConstraint('channel_id', 'url', name='feed_channel_url_uc')
     )
+
+    async def find_oldest(self, timeout):
+        stmt = sa.select([self.table])
+        stmt = stmt.where(now() - self['updated_at'] > timeout)
+        stmt = stmt.order_by(self['updated_at'])
+        result = await self.conn.execute(stmt)
+        return await result.fetchall()
+
+    async def mark_as_updated(self, feed_id):
+        await self.update(self['id'] == feed_id, updated_at=now())
 
 
 class Entry(Base):
@@ -69,3 +80,14 @@ class Entry(Base):
         sa.Column('was_sent', sa.Boolean(), default=False),
         sa.UniqueConstraint('feed_id', 'title', 'link', name='entry_feed_title_link_uc')
     )
+
+    async def is_exists(self, feed_id, title, link):
+        stmt = sa.select([sa.func.count('*')])
+        stmt = stmt.where(self['feed_id'] == feed_id)
+        stmt = stmt.where(self['title'] == title)
+        stmt = stmt.where(self['link'] == link)
+        return (await self.conn.scalar(stmt)) > 0
+
+
+def now():
+    return sa.extract('epoch', sa.func.now())
