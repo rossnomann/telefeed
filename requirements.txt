@@ -1,0 +1,8 @@
+aiopg==0.13.2
+aioreloader==0.2.0
+alembic==0.9.8
+feedparser==5.2.1
+psycopg2-binary==2.7.4
+pytz==2018.3
+sqlalchemy==1.2.4
+telepot==12.6
