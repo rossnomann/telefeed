@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import sqlalchemy as sa
 
 
@@ -52,4 +54,18 @@ class Feed(Base):
         sa.Column('channel_id', sa.ForeignKey('channel.id')),
         sa.Column('url', sa.String()),
         sa.UniqueConstraint('channel_id', 'url', name='feed_channel_url_uc')
+    )
+
+
+class Entry(Base):
+    table = sa.Table(
+        'entry',
+        metadata,
+        sa.Column('id', sa.Integer(), primary_key=True),
+        sa.Column('feed_id', sa.ForeignKey('feed.id')),
+        sa.Column('title', sa.String()),
+        sa.Column('link', sa.String()),
+        sa.Column('created_at', sa.DateTime(), default=datetime.utcnow),
+        sa.Column('was_sent', sa.Boolean(), default=False),
+        sa.UniqueConstraint('feed_id', 'title', 'link', name='entry_feed_title_link_uc')
     )
