@@ -33,3 +33,12 @@ class Base:
         if args:
             stmt = stmt.where(sa.and_(*args))
         await self.conn.execute(stmt)
+
+
+class Channel(Base):
+    table = sa.Table(
+        'channel',
+        metadata,
+        sa.Column('id', sa.Integer(), primary_key=True),
+        sa.Column('name', sa.String(), unique=True, nullable=False),
+    )
