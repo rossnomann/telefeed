@@ -100,12 +100,29 @@ class Entry(Base):
         stmt = stmt.where(self['link'] == link)
         return (await self.conn.scalar(stmt)) > 0
 
-    async def delete_for_channel(self, channel_id):
+    async def _get_channel_feeds(self, channel_id):
         stmt = sa.select([Feed.table.c.id]).where(Feed.table.c.channel_id == channel_id)
         result = await self.conn.execute(stmt)
         feeds = await result.fetchall()
+        return [i['id'] for i in feeds]
+
+    async def get_new_for_channel(self, channel_id):
+        feeds = await self._get_channel_feeds(channel_id)
+        if not feeds:
+            return
+        stmt = sa.select([self['id'], self['title'], self['link'], self['created_at']])
+        stmt = stmt.where(self['feed_id'].in_(feeds))
+        stmt = stmt.where(self['was_sent'].is_(False))
+        stmt = stmt.order_by(self['created_at'])
+        result = await self.conn.execute(stmt)
+        return await result.fetchall()
+
+    async def mark_as_sent(self, entries):
+        await self.update(self['id'].in_(entries), was_sent=True)
+
+    async def delete_for_channel(self, channel_id):
+        feeds = await self._get_channel_feeds(channel_id)
         if feeds:
-            feeds = [i['id'] for i in feeds]
             await self.delete(self['feed_id'].in_(feeds))
 
 
