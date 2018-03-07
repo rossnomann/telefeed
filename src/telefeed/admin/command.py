@@ -46,9 +46,9 @@ def generate_help(commands, *, completion=False):
                 args.append('<{}>'.format(arg_name))
             else:
                 args.append('[{}]'.format(arg_name))
-        args = ' '.join(args)
+        args = ': {}'.format(' '.join(args)) if args else ''
         if completion:
-            parts.append('{} - {}: {}'.format(name, data['desc'], args))
+            parts.append('{} - {}{}'.format(name, data['desc'], args))
         else:
             name = '/{}'.format(name)
             parts.append(' '.join((name, args, data['desc'])))

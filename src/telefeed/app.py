@@ -5,7 +5,7 @@ import aioreloader
 
 from aiopg import sa
 
-from telefeed import config, parser
+from telefeed import admin, config, parser
 
 logger = logging.getLogger(__name__)
 
@@ -16,9 +16,10 @@ def main():
     loop = asyncio.get_event_loop()
     sa_engine = loop.run_until_complete(sa.create_engine(config.SA_URL, echo=config.DEBUG))
     try:
+        admin.start(loop, sa_engine)
+        loop.create_task(parser.run(loop, sa_engine))
         if config.DEBUG:
             aioreloader.start()
-        loop.create_task(parser.run(loop, sa_engine))
         loop.run_forever()
     finally:
         sa_engine.close()

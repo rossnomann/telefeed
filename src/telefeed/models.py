@@ -45,6 +45,10 @@ class Channel(Base):
         sa.Column('name', sa.String(), unique=True, nullable=False),
     )
 
+    async def get_list(self):
+        result = await self.conn.execute(sa.select([self.table]).order_by(self['name']))
+        return await result.fetchall()
+
 
 class Feed(Base):
     table = sa.Table(
@@ -56,6 +60,14 @@ class Feed(Base):
         sa.Column('updated_at', sa.Integer(), default=0),
         sa.UniqueConstraint('channel_id', 'url', name='feed_channel_url_uc')
     )
+
+    async def get_list(self):
+        channel = Channel.table.c.name.label('channel')
+        stmt = sa.select([channel, self['url']])
+        stmt = stmt.select_from(self.table.join(Channel.table))
+        stmt = stmt.order_by(channel).order_by(self['url'])
+        result = await self.conn.execute(stmt)
+        return await result.fetchall()
 
     async def find_oldest(self, timeout):
         stmt = sa.select([self.table])
@@ -87,6 +99,14 @@ class Entry(Base):
         stmt = stmt.where(self['title'] == title)
         stmt = stmt.where(self['link'] == link)
         return (await self.conn.scalar(stmt)) > 0
+
+    async def delete_for_channel(self, channel_id):
+        stmt = sa.select([Feed.table.c.id]).where(Feed.table.c.channel_id == channel_id)
+        result = await self.conn.execute(stmt)
+        feeds = await result.fetchall()
+        if feeds:
+            feeds = [i['id'] for i in feeds]
+            await self.delete(self['feed_id'].in_(feeds))
 
 
 def now():
