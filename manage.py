@@ -13,7 +13,7 @@ def main():
         if argc != 2:
             print('Too many arguments')
             sys.exit(1)
-        result = subprocess.run(['docker-compose', 'run', '--rm', 'app', 'bin/tests'])
+        result = subprocess.call(['docker-compose', 'run', '--rm', 'app', 'bin/tests'])
         sys.exit(result.returncode)
     elif command == 'build':
         if argc == 3:
@@ -23,13 +23,13 @@ def main():
             sys.exit(1)
         else:
             version = None
-        result = subprocess.run(['docker-compose', 'build', 'app'])
+        result = subprocess.call(['docker-compose', 'build', 'app'])
         exitcode = result.returncode
         if version:
             if exitcode != 0:
                 sys.exit(exitcode)
             target_image = 'rossnomann/telefeed:{}'.format(version)
-            result = subprocess.run(['docker', 'tag', 'telefeed:latest', target_image])
+            result = subprocess.call(['docker', 'tag', 'telefeed:latest', target_image])
             exitcode = result.returncode
         sys.exit(exitcode)
     else:
