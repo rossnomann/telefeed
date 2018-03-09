@@ -25,7 +25,7 @@ def parse_url(url):
             entry_date = entry['published_parsed']
         if entry_date:
             entry_date = datetime.fromtimestamp(mktime(entry_date))
-        result.append((entry['link'], entry['title'], entry_date))
+        result.append((entry['link'], entry.get('title', ''), entry_date))
     return result
 
 
