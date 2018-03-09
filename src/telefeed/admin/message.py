@@ -48,8 +48,12 @@ class MessageHandler:
                 reply_options = {}
             await self._send_message(chat_id=chat_id, text=reply, **reply_options)
 
-    async def _send_message(self, *args, **kwargs):
-        try:
-            return await self.bot.sendMessage(*args, **kwargs)
-        except Exception:
-            logger.exception('Failed to send message: %r %r', args, kwargs)
+    async def _send_message(self, chat_id, text, **kwargs):
+        if not isinstance(text, list):
+            text = [text]
+        for i in text:
+            try:
+                await self.bot.sendMessage(chat_id=chat_id, text=i, **kwargs)
+            except Exception:
+                error_msg = 'Failed to send message: chat_id=%r text=%r kwargs=%r'
+                logger.exception(error_msg, chat_id, i, kwargs)
