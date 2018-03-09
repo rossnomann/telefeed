@@ -1,0 +1,13 @@
+.pytest_cache/
+.coverage
+.dockerignore
+.env
+.git
+.gitignore
+docker-compose.yml
+Dockerfile
+LICENSE
+manage.py
+README.md
+**/__pycache__
+**/*.pyc
