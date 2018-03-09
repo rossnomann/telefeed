@@ -22,7 +22,7 @@ class Base:
 
     async def create(self, **kwargs):
         stmt = self.table.insert().values(**kwargs)
-        await self.conn.execute(stmt)
+        return await self.conn.scalar(stmt)
 
     async def update(self, *args, **kwargs):
         stmt = self.table.update().values(**kwargs)

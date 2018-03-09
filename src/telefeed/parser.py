@@ -59,7 +59,7 @@ class Parser:
         logger.info('Parsing feeds finished (%d entries created)', entries_count)
 
 
-async def run(loop, sa_engine):
+async def run(loop, sa_engine):  # pragma: no cover
     async with sa_engine.acquire() as sa_conn:
         fm = Feed(sa_conn)
         em = Entry(sa_conn)

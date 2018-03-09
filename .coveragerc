@@ -1,0 +1,4 @@
+[run]
+omit =
+    */telefeed/app.py
+    */telefeed/admin/__init__.py

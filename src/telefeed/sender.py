@@ -37,7 +37,7 @@ class Sender:
         logger.info('Sending entries done')
 
 
-async def run(loop, sa_engine, bot):
+async def run(loop, sa_engine, bot):  # pragma: no cover
     async with sa_engine.acquire() as sa_conn:
         channel = Channel(sa_conn)
         entry = Entry(sa_conn)

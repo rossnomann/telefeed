@@ -4,7 +4,7 @@ from telefeed.models import Channel, Feed, Entry
 
 
 def _clean_channel_name(name):
-    if name[0] == '@':
+    if len(name) > 0 and name[0] == '@':
         name = name[1:]
     return name
 
@@ -66,6 +66,8 @@ async def add_feed(sa_conn, channel, url):
     channel = _clean_channel_name(channel)
     if not channel:
         return 'Bad channel name'
+    if not url:
+        return 'Bad feed URL'
     cm = Channel(sa_conn)
     ch_obj = await cm.find_one(cm['name'] == channel)
     if not ch_obj:
@@ -80,6 +82,8 @@ async def del_feed(sa_conn, channel, url):
     channel = _clean_channel_name(channel)
     if not channel:
         return 'Bad channel name'
+    if not url:
+        return 'Bad feed URL'
     cm = Channel(sa_conn)
     ch_obj = await cm.find_one(cm['name'] == channel)
     if not ch_obj:
