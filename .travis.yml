@@ -14,7 +14,8 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
 script:
-  - cat <<EOF > .env
+  - |
+    cat <<EOF > .env
     TELEFEED_ADMIN_USER_ID=test-user
     TELEFEED_TOKEN=test-token
     EOF
