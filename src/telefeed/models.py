@@ -109,7 +109,7 @@ class Entry(Base):
     async def get_new_for_channel(self, channel_id):
         feeds = await self._get_channel_feeds(channel_id)
         if not feeds:
-            return
+            return []
         stmt = sa.select([self['id'], self['title'], self['link'], self['created_at']])
         stmt = stmt.where(self['feed_id'].in_(feeds))
         stmt = stmt.where(self['was_sent'].is_(False))
