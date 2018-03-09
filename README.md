@@ -2,6 +2,10 @@
 
 An RSS/Atom bot for telegram channels
 
+[![Travis](https://img.shields.io/travis/rossnomann/telefeed.svg?style=flat-square)](https://travis-ci.org/rossnomann/telefeed)
+[![Docker Stars](https://img.shields.io/docker/stars/rossnomann/telefeed.svg?style=flat-square)](https://hub.docker.com/r/rossnomann/telefeed/)
+[![Docker Pulls](https://img.shields.io/docker/pulls/rossnomann/telefeed.svg?style=flat-square)](https://hub.docker.com/r/rossnomann/telefeed/)
+
 # Usage
 
 - `/addchannel <name>` - adds a new channel.
