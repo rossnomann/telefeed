@@ -9,6 +9,11 @@ def _clean_channel_name(name):
     return name
 
 
+def chunks(l, n):
+    for i in range(0, len(l), n):
+        yield l[i:i + n]
+
+
 async def list_channels(sa_conn):
     """listchannels - show channels"""
     cm = Channel(sa_conn)
@@ -50,15 +55,14 @@ async def list_feeds(sa_conn):
     fm = Feed(sa_conn)
     items = await fm.get_list()
     if items:
-        parts = []
+        text = []
         for channel, feeds in itertools.groupby(items, lambda x: x['channel']):
-            parts.append('*@{}*'.format(channel))
-            parts.extend(feed['url'] for feed in feeds)
-            parts.append('')
-        text = '\n'.join(parts)
+            text.append('<b>@{}</b>'.format(channel))
+            for chunk in chunks(list(feeds), 10):
+                text.append('\n'.join(feed['url'] for feed in chunk))
     else:
         text = 'There are no feeds to display'
-    return text, {'parse_mode': 'Markdown', 'disable_web_page_preview': True}
+    return text, {'parse_mode': 'HTML', 'disable_web_page_preview': True}
 
 
 async def add_feed(sa_conn, channel, url):

@@ -159,7 +159,7 @@ async def test_del_channel():
 @pytest.mark.asyncio
 async def test_list_feeds():
     with mock_models():
-        opts = {'parse_mode': 'Markdown', 'disable_web_page_preview': True}
+        opts = {'parse_mode': 'HTML', 'disable_web_page_preview': True}
         assert (await handlers.list_feeds(SA_CONN)) == ('There are no feeds to display', opts)
         FeedMock.items = [
             {'channel': 'ch1', 'url': 'url1'},
@@ -169,10 +169,10 @@ async def test_list_feeds():
             {'channel': 'ch2', 'url': 'url2'},
             {'channel': 'ch2', 'url': 'url3'}
         ]
-        expected = '\n'.join((
-            '*@ch1*', 'url1', 'url2', 'url3', '',
-            '*@ch2*', 'url1', 'url2', 'url3', '',
-        ))
+        expected = [
+            '<b>@ch1</b>', 'url1\nurl2\nurl3',
+            '<b>@ch2</b>', 'url1\nurl2\nurl3',
+        ]
         assert (await handlers.list_feeds(SA_CONN)) == (expected, opts)
 
 
