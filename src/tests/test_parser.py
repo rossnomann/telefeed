@@ -2,8 +2,18 @@ from collections import defaultdict
 
 import pytest
 
-from telefeed import config
-from telefeed.parser import Parser
+from telefeed import config, parser
+
+
+class LoggerMock:
+    def __init__(self):
+        self.errors = []
+
+    def info(self, *args):
+        pass
+
+    def exception(self, msg, *args):
+        self.errors.append(msg % args)
 
 
 class FeedMock:
@@ -50,13 +60,29 @@ async def test_parser(event_loop):
         }
     ])
     entry = EntryMock()
-    parser = Parser(event_loop, feed, entry)
-    await parser.parse_feeds()
+    p = parser.Parser(event_loop, feed, entry)
+    await p.parse_feeds()
     assert len(entry.entries[1]) > 0
     assert len(entry.entries[2]) > 0
 
+    old_logger = parser.logger
+    parser.logger = LoggerMock()
+    try:
+        def parse_url_exc(url):
+            raise Exception('Unable to parse: %s' % url)
+        p._parse_url = parse_url_exc
+        await p.parse_feeds()
+        assert parser.logger.errors == [
+            'Failed to parse feed '
+            '"https://habrahabr.ru/rss/all/"',
+            'Failed to parse feed '
+            '"https://www.youtube.com/feeds/videos.xml?channel_id=UCnK9PxMozTYs8ELOvgMNKFA"',
+        ]
+    finally:
+        parser.logger = old_logger
+
     feed = FeedMock([])
     entry = EntryMock()
-    parser = Parser(event_loop, feed, entry)
-    await parser.parse_feeds()
+    p = parser.Parser(event_loop, feed, entry)
+    await p.parse_feeds()
     assert not entry.entries

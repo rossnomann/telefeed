@@ -47,15 +47,20 @@ class Parser:
         entries_count = 0
         for feed in feeds:
             logger.info('Parsing feed "%s"', feed['url'])
-            for link, title, date in (await self._parse_url(feed['url'])):
-                if not (await self.entry.is_exists(feed['id'], title, link)):
-                    params = {'feed_id': feed['id'], 'title': title, 'link': link}
-                    if date:
-                        params['created_at'] = date
-                    await self.entry.create(**params)
-                    entries_count += 1
-            await self.feed.mark_as_updated(feed['id'])
-            logger.info('Parsing feed "%s" finished', feed['url'])
+            try:
+                entries = await self._parse_url(feed['url'])
+            except Exception as exc:
+                logger.exception('Failed to parse feed "%s"', feed['url'])
+            else:
+                for link, title, date in entries:
+                    if not (await self.entry.is_exists(feed['id'], title, link)):
+                        params = {'feed_id': feed['id'], 'title': title, 'link': link}
+                        if date:
+                            params['created_at'] = date
+                        await self.entry.create(**params)
+                        entries_count += 1
+                await self.feed.mark_as_updated(feed['id'])
+                logger.info('Parsing feed "%s" finished', feed['url'])
         logger.info('Parsing feeds finished (%d entries created)', entries_count)
 
 
