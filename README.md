@@ -86,7 +86,50 @@ $ docker-compose logs
 
 Now you can add channels and feeds.
 Don't forget to add your bot to channel's admins list.
+
 Entries will appear as soon as possible. Good luck!
+
+# Upgrade
+
+Stop app:
+```sh
+$ docker-compose stop
+```
+
+Create a backup (`docker-compose.yml` and database).
+
+Change image version in `docker-compose.yml`:
+
+```yaml
+# version: '3.4'
+# services:
+#   app:
+      image: rossnomann/telefeed:%new-version-here%
+```
+
+Make other changes in `docker-compose.yml` if required (see changelog).
+
+Pull a new image:
+```sh
+$ docker-compose pull
+```
+
+Run migrations:
+```sh
+docker-compose run --rm app alembic upgrade head
+```
+
+Start app:
+```sh
+$ docker-compose up -d
+```
+
+Check that everything is ok:
+
+```sh
+$ docker-compose ps
+$ docker-compose logs
+```
 
 # Development
 
