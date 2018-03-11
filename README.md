@@ -74,14 +74,14 @@ $ docker-compose run --rm app alembic upgrade head
 Start app:
 
 ```sh
-docker-compose up -d
+$ docker-compose up -d
 ```
 
 Check that everything is ok:
 
 ```sh
-docker-compose ps
-docker-compose logs
+$ docker-compose ps
+$ docker-compose logs
 ```
 
 Now you can add channels and feeds.
@@ -109,22 +109,22 @@ TELEFEED_TIMEZONE=Europe/Moscow
 Run app and db using:
 
 ```sh
-docker-compose up
+$ docker-compose up
 ```
 
 Database access:
-```
-psql -h localhost -p 6001 -U postgres postgres
+```sh
+$ psql -h localhost -p 6001 -U postgres postgres
 ```
 
 Tests:
-```
-./manage.py test
+```sh
+$ ./manage.py test
 ```
 
 (Re)build image:
-```
-./manage.py build
+```sh
+$ ./manage.py build
 ```
 
 # Changelog
