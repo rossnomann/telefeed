@@ -172,6 +172,10 @@ $ ./manage.py build
 
 # Changelog
 
+## 0.1.1 (11.03.2018)
+
+- Catch feedparser exceptions
+
 ## 0.1.0 (09.03.2018)
 
 - First release
