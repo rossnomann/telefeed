@@ -28,7 +28,7 @@ class Sender:
                     entry['title'] = html.escape(entry['title'], quote=False)
                     entry['title'] = entry['title'].replace('"', '&quot;')
                     entry['created_at'] = entry['created_at'].astimezone(config.TIMEZONE)
-                    entry['created_at'] = entry['created_at'].strftime('%b %d, %Y / %H:%M')
+                    entry['created_at'] = entry['created_at'].strftime('%b %d, %Y / %H:%M %Z')
                     msg = '<a href="{link}">{title}</a> ({created_at})'.format(**entry)
                     await self.bot.sendMessage(channel_name, msg, parse_mode='HTML')
                 except Exception:

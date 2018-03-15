@@ -67,14 +67,14 @@ async def test_sender():
     assert bot.sent == [
         {
             'channel': '@channel1',
-            'msg': '<a href="http://test">Test Channel 1</a> (Dec 21, 2012 / 09:00)',
+            'msg': '<a href="http://test">Test Channel 1</a> (Dec 21, 2012 / 09:00 UTC)',
             'parse_mode': 'HTML'
         },
         {
             'channel': '@channel2',
             'msg': (
                 '<a href="http://test">Test &lt;&quot;Channel&quot;&gt; \'2</a> '
-                '(Dec 21, 2012 / 09:00)'
+                '(Dec 21, 2012 / 09:00 UTC)'
             ),
             'parse_mode': 'HTML'
         }
