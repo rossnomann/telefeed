@@ -172,13 +172,18 @@ $ ./manage.py build
 
 # Changelog
 
+## 0.1.2 (15.03.2018)
+
+- Escape html entities in entry title.
+- Display dates with a timezone.
+
 ## 0.1.1 (11.03.2018)
 
-- Catch feedparser exceptions
+- Catch feedparser exceptions.
 
 ## 0.1.0 (09.03.2018)
 
-- First release
+- First release.
 
 # LICENSE
 
