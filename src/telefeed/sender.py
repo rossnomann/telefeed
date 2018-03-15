@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import html
 
 from telefeed import config
 from telefeed.models import Channel, Entry
@@ -24,6 +25,8 @@ class Sender:
             for entry in (await self.entry.get_new_for_channel(channel['id'])):
                 try:
                     entry = dict(entry)
+                    entry['title'] = html.escape(entry['title'], quote=False)
+                    entry['title'] = entry['title'].replace('"', '&quot;')
                     entry['created_at'] = entry['created_at'].astimezone(config.TIMEZONE)
                     entry['created_at'] = entry['created_at'].strftime('%b %d, %Y / %H:%M')
                     msg = '<a href="{link}">{title}</a> ({created_at})'.format(**entry)

@@ -52,7 +52,7 @@ async def test_sender():
         'channel2': [
             {
                 'id': 'channel2entry1',
-                'title': 'Test Channel 2',
+                'title': 'Test <"Channel"> \'2',
                 'link': 'http://test',
                 'created_at': datetime(2012, 12, 21, 9, 0)
             },
@@ -72,7 +72,10 @@ async def test_sender():
         },
         {
             'channel': '@channel2',
-            'msg': '<a href="http://test">Test Channel 2</a> (Dec 21, 2012 / 09:00)',
+            'msg': (
+                '<a href="http://test">Test &lt;&quot;Channel&quot;&gt; \'2</a> '
+                '(Dec 21, 2012 / 09:00)'
+            ),
             'parse_mode': 'HTML'
         }
     ]
