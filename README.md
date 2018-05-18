@@ -172,6 +172,10 @@ $ ./manage.py build
 
 # Changelog
 
+## 0.1.3 (18.05.2018)
+
+- Exclude entry title from unique constraint.
+
 ## 0.1.2 (15.03.2018)
 
 - Escape html entities in entry title.
