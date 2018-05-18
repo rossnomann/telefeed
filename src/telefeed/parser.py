@@ -53,7 +53,7 @@ class Parser:
                 logger.exception('Failed to parse feed "%s"', feed['url'])
             else:
                 for link, title, date in entries:
-                    if not (await self.entry.is_exists(feed['id'], title, link)):
+                    if not (await self.entry.is_exists(feed['id'], link)):
                         params = {'feed_id': feed['id'], 'title': title, 'link': link}
                         if date:
                             params['created_at'] = date

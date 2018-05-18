@@ -90,13 +90,12 @@ class Entry(Base):
         sa.Column('link', sa.String()),
         sa.Column('created_at', sa.DateTime(), default=datetime.utcnow),
         sa.Column('was_sent', sa.Boolean(), default=False),
-        sa.UniqueConstraint('feed_id', 'title', 'link', name='entry_feed_title_link_uc')
+        sa.UniqueConstraint('feed_id', 'link', name='entry_feed_link_uc')
     )
 
-    async def is_exists(self, feed_id, title, link):
+    async def is_exists(self, feed_id, link):
         stmt = sa.select([sa.func.count('*')])
         stmt = stmt.where(self['feed_id'] == feed_id)
-        stmt = stmt.where(self['title'] == title)
         stmt = stmt.where(self['link'] == link)
         return (await self.conn.scalar(stmt)) > 0
 

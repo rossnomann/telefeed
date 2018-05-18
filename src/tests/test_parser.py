@@ -34,14 +34,14 @@ class EntryMock:
         self.__added = []
         self.entries = defaultdict(list)
 
-    def _get_key(self, feed_id, title, link):
-        return '-'.join(map(str, (feed_id, title, link)))
+    def _get_key(self, feed_id, link):
+        return '-'.join(map(str, (feed_id, link)))
 
-    async def is_exists(self, feed_id, title, link):
-        return self._get_key(feed_id, title, link) in self.__added
+    async def is_exists(self, feed_id, link):
+        return self._get_key(feed_id, link) in self.__added
 
     async def create(self, feed_id, title, link, created_at=None):
-        key = self._get_key(feed_id, title, link)
+        key = self._get_key(feed_id, link)
         assert key not in self.__added
         self.__added.append(key)
         self.entries[feed_id].append({'title': title, 'link': link, 'created_at': created_at})

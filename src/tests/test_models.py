@@ -94,7 +94,7 @@ async def test_entry(sa_engine):
         extra_feed_id = await feed.create(channel_id=extra_channel_id, url='http://testentriesext')
         entry_id = await entry.create(feed_id=feed_id, title='entry', link='http://entry')
         extra_entry_id = await entry.create(feed_id=extra_feed_id, title='ext', link='http://ext')
-        assert (await entry.is_exists(feed_id, 'entry', 'http://entry'))
+        assert (await entry.is_exists(feed_id, 'http://entry'))
 
         new_entries = await entry.get_new_for_channel(channel_id)
         assert len(new_entries) == 1
