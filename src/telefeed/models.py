@@ -117,7 +117,11 @@ class Entry(Base):
         return await result.fetchall()
 
     async def mark_as_sent(self, entries):
-        await self.update(self['id'].in_(entries), was_sent=True)
+        if isinstance(entries, list):
+            where = self['id'].in_(entries)
+        else:
+            where = self['id'] == entries
+        await self.update(where, was_sent=True)
 
     async def delete_for_channel(self, channel_id):
         feeds = await self._get_channel_feeds(channel_id)

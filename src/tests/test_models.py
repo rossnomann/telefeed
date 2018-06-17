@@ -101,6 +101,7 @@ async def test_entry(sa_engine):
         assert new_entries[0]['id'] == entry_id
 
         await entry.mark_as_sent([entry_id])
+        await entry.mark_as_sent(entry_id)
 
         new_entries = await entry.get_new_for_channel(channel_id)
         assert not new_entries

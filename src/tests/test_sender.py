@@ -9,7 +9,7 @@ class BotMock:
     def __init__(self):
         self.sent = []
 
-    async def sendMessage(self, channel, msg, parse_mode):
+    async def send_message(self, channel, msg, parse_mode):
         self.sent.append({'channel': channel, 'msg': msg, 'parse_mode': parse_mode})
 
 
@@ -29,8 +29,8 @@ class EntryMock:
     async def get_new_for_channel(self, channel_id):
         return self.entries[channel_id]
 
-    async def mark_as_sent(self, entries):
-        self.sent.extend(entries)
+    async def mark_as_sent(self, entry):
+        self.sent.append(entry)
 
 
 @pytest.mark.asyncio

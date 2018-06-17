@@ -21,7 +21,6 @@ class Sender:
         logger.info('Sending entries...')
         for channel in (await self.channel.get_list()):
             channel_name = '@{}'.format(channel['name'])
-            sent = []
             for entry in (await self.entry.get_new_for_channel(channel['id'])):
                 try:
                     entry = dict(entry)
@@ -30,13 +29,11 @@ class Sender:
                     entry['created_at'] = entry['created_at'].astimezone(config.TIMEZONE)
                     entry['created_at'] = entry['created_at'].strftime('%b %d, %Y / %H:%M %Z')
                     msg = '<a href="{link}">{title}</a> ({created_at})'.format(**entry)
-                    await self.bot.sendMessage(channel_name, msg, parse_mode='HTML')
+                    await self.bot.send_message(channel_name, msg, parse_mode='HTML')
                 except Exception:
                     logger.exception('Failed to send entry %s to %s', entry['id'], channel_name)
                 else:
-                    sent.append(entry['id'])
-            if sent:
-                await self.entry.mark_as_sent(sent)
+                    await self.entry.mark_as_sent(entry['id'])
         logger.info('Sending entries done')
 
 

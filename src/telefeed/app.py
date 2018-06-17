@@ -4,9 +4,9 @@ import logging
 import aioreloader
 
 from aiopg import sa
-from telepot.aio import Bot
-
-from telefeed import admin, config, parser, sender
+from telefeed import config, parser, sender
+from telefeed.bot import Bot
+from telefeed.commands import Cmd
 
 logger = logging.getLogger(__name__)
 
@@ -15,10 +15,12 @@ def main():
     config.setup_logging()
     logger.info('Telefeed started')
     loop = asyncio.get_event_loop()
-    bot = Bot(config.TOKEN)
+    bot = Bot(config.TOKEN, proxy=config.PROXY)
     sa_engine = loop.run_until_complete(sa.create_engine(config.SA_URL, echo=config.DEBUG))
+    cmd = Cmd(sa_engine, config.ADMIN_USER_ID)
+    cmd.setup(bot)
     try:
-        admin.start(loop, sa_engine, bot)
+        loop.create_task(bot.loop())
         loop.create_task(parser.run(loop, sa_engine))
         loop.create_task(sender.run(loop, sa_engine, bot))
         if config.DEBUG:
