@@ -172,6 +172,11 @@ $ ./manage.py build
 
 # Changelog
 
+## 0.1.4 (19.06.2018)
+
+- Migrate to aiotg.
+- Add http/socks5 proxy support.
+
 ## 0.1.3 (18.05.2018)
 
 - Exclude entry title from unique constraint.
