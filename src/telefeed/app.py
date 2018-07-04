@@ -4,9 +4,9 @@ import logging
 import aioreloader
 
 from aiopg import sa
-from aiotg import Bot
 
 from telefeed import config, parser, sender
+from telefeed.bot import Bot
 from telefeed.commands import Cmd
 
 logger = logging.getLogger(__name__)
