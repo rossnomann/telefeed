@@ -172,6 +172,10 @@ $ ./manage.py build
 
 # Changelog
 
+## 0.1.5 (04.07.2018)
+
+- Catch exceptions in getUpdates loop
+
 ## 0.1.4 (19.06.2018)
 
 - Migrate to aiotg.
