@@ -1,9 +1,0 @@
-#!/bin/bash
-
-export TELEFEED_TIMEZONE='UTC'
-coverage erase
-dockerize -wait tcp://postgres:5432
-coverage run -a --source telefeed /usr/local/bin/pytest -vvv src/tests
-tests_status=$?
-coverage report -m
-exit $tests_status
