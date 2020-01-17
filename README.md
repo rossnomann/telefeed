@@ -10,6 +10,7 @@ Download binary:
 
 ```sh
 $ curl -L https://github.com/rossnomann/telefeed/releases/download/0.2.0/telefeed-0.2.0_x86_64-linux-gnu --output telefeed
+$ chmod +x telefeed
 ```
 
 Create `config.yaml`:
@@ -32,7 +33,7 @@ feeds:
 
 Run:
 ```sh
-telefeed config.yaml
+./telefeed config.yaml
 ```
 
 # Changelog
