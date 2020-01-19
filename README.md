@@ -9,7 +9,7 @@ Make sure that you have installed [Redis](https://redis.io/).
 Download binary:
 
 ```sh
-$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.2.0/telefeed-0.2.0_x86_64-linux-gnu --output telefeed
+$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.2.1/telefeed-0.2.1_x86_64-linux-gnu --output telefeed
 $ chmod +x telefeed
 ```
 
@@ -37,6 +37,10 @@ Run:
 ```
 
 # Changelog
+
+## 0.2.1 (19.01.2020)
+
+- Fixed entries duplication.
 
 ## 0.2.0 (17.01.2020)
 
