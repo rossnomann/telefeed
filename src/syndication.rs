@@ -35,7 +35,7 @@ impl Syndication {
         }
     }
 
-    async fn get_entries(&self, feed: &Feed) -> Result<Vec<String>, SyndicationError> {
+    async fn get_entries(&self, feed: &Feed) -> Result<Vec<Entry>, SyndicationError> {
         let rep = self.http_client.get(&feed.url).send().await?;
         let status = rep.status();
         if !status.is_success() {
@@ -61,12 +61,14 @@ impl Syndication {
                             let mut sent_count = 0;
                             log::info!("Got {} entries for {}", total_entries, feed.url);
                             for entry in entries {
-                                let key = format!("{}:{}", PREFIX, b64encode(&format!("{}{}", &channel_name, entry)));
+                                let key =
+                                    format!("{}:{}", PREFIX, b64encode(&format!("{}{}", &channel_name, entry.url)));
                                 if !redis_connection.exists(&key).await? {
+                                    let text = entry.to_string();
                                     redis_connection
-                                        .set_and_expire_seconds(key, entry.clone(), KEY_LIFETIME)
+                                        .set_and_expire_seconds(key, &text, KEY_LIFETIME)
                                         .await?;
-                                    tokio::spawn(send_message(self.api.clone(), channel_name.clone(), entry));
+                                    tokio::spawn(send_message(self.api.clone(), channel_name.clone(), text));
                                     sent_count += 1;
                                 }
                             }
@@ -126,7 +128,7 @@ async fn send_message(api: Api, channel_name: String, text: String) -> Result<()
     }
 }
 
-fn read_rss<R: BufRead>(reader: R) -> Result<Vec<String>, SyndicationError> {
+fn read_rss<R: BufRead>(reader: R) -> Result<Vec<Entry>, SyndicationError> {
     let now = Utc::now().naive_utc();
     let now_str = Utc::now().to_rfc2822();
     let mut result = Vec::new();
@@ -144,7 +146,7 @@ fn read_rss<R: BufRead>(reader: R) -> Result<Vec<String>, SyndicationError> {
             _ => now_str.clone(), // let's assume that item published now
         };
         if let (Some(title), Some(link)) = (item.title(), item.link()) {
-            result.push(format!(r#"<a href="{}">{}</a> ({})"#, link, title, pub_date));
+            result.push(Entry::new(link, title, pub_date));
         } else {
             log::debug!("Title or link not found for RSS item: {:?}", item);
         }
@@ -152,7 +154,7 @@ fn read_rss<R: BufRead>(reader: R) -> Result<Vec<String>, SyndicationError> {
     Ok(result)
 }
 
-fn read_atom<R: BufRead>(reader: R) -> Result<Vec<String>, SyndicationError> {
+fn read_atom<R: BufRead>(reader: R) -> Result<Vec<Entry>, SyndicationError> {
     let now = Utc::now().naive_utc();
     let mut result = Vec::new();
     let feed = AtomFeed::read_from(reader)?;
@@ -171,14 +173,37 @@ fn read_atom<R: BufRead>(reader: R) -> Result<Vec<String>, SyndicationError> {
         }
         let link = &links[0];
         let title = link.title().unwrap_or_else(|| item.title());
-        result.push(format!(
-            r#"<a href="{}">{}</a> ({})"#,
-            link.href(),
-            title,
-            published.to_rfc2822()
-        ));
+        result.push(Entry::new(link.href(), title, published.to_rfc2822()));
     }
     Ok(result)
+}
+
+#[derive(Debug)]
+struct Entry {
+    url: String,
+    title: String,
+    published: String,
+}
+
+impl Entry {
+    fn new<U, T, P>(url: U, title: T, published: P) -> Self
+    where
+        U: Into<String>,
+        T: Into<String>,
+        P: Into<String>,
+    {
+        Self {
+            url: url.into(),
+            title: title.into(),
+            published: published.into(),
+        }
+    }
+}
+
+impl fmt::Display for Entry {
+    fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
+        write!(out, r#"<a href="{}">{}</a> ({})"#, self.url, self.title, self.published)
+    }
 }
 
 #[derive(Debug)]
