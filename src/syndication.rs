@@ -64,7 +64,7 @@ impl Syndication {
                                 let key =
                                     format!("{}:{}", PREFIX, b64encode(&format!("{}{}", &channel_name, entry.url)));
                                 if !redis_connection.exists(&key).await? {
-                                    let text = entry.to_string();
+                                    let text = entry.to_html();
                                     redis_connection
                                         .set_and_expire_seconds(key, &text, KEY_LIFETIME)
                                         .await?;
@@ -198,11 +198,10 @@ impl Entry {
             published: published.into(),
         }
     }
-}
 
-impl fmt::Display for Entry {
-    fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
-        write!(out, r#"<a href="{}">{}</a> ({})"#, self.url, self.title, self.published)
+    fn to_html(&self) -> String {
+        let title = ParseMode::Html.escape(&self.title);
+        format!(r#"<a href="{}">{}</a> ({})"#, self.url, title, self.published)
     }
 }
 
