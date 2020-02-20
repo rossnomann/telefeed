@@ -5,11 +5,11 @@ use std::{env, fmt};
 use tgbot::{Api, ApiError};
 
 mod config;
-mod syndication;
+mod syndicate;
 
 use self::{
     config::{Config, ConfigError},
-    syndication::{Syndication, SyndicationError},
+    syndicate::{SyndicateBuilder, SyndicateError},
 };
 
 async fn run() -> Result<(), Error> {
@@ -24,8 +24,14 @@ async fn run() -> Result<(), Error> {
     let api = Api::new(api_config)?;
     let http_client = HttpClient::new();
     let redis_connection = RedisConnection::connect(config.redis_url.as_str()).await?;
-    let syndication = Syndication::new(api, http_client, redis_connection);
-    syndication.run(config.feeds).await?;
+    SyndicateBuilder::default()
+        .api(api)
+        .http_client(http_client)
+        .redis_connection(redis_connection)
+        .include_feed_title(config.include_feed_title)
+        .build()
+        .run(config.feeds)
+        .await?;
     Ok(())
 }
 
@@ -41,7 +47,7 @@ enum Error {
     Config(ConfigError),
     ConfigPathMissing,
     Redis(RedisError),
-    Syndication(SyndicationError),
+    Syndicate(SyndicateError),
 }
 
 impl From<ApiError> for Error {
@@ -62,9 +68,9 @@ impl From<RedisError> for Error {
     }
 }
 
-impl From<SyndicationError> for Error {
-    fn from(err: SyndicationError) -> Self {
-        Error::Syndication(err)
+impl From<SyndicateError> for Error {
+    fn from(err: SyndicateError) -> Self {
+        Error::Syndicate(err)
     }
 }
 
@@ -75,7 +81,7 @@ impl fmt::Display for Error {
             Error::Config(err) => write!(out, "Configuration error: {}", err),
             Error::ConfigPathMissing => write!(out, "You need to provide a path to config"),
             Error::Redis(err) => write!(out, "Redis error: {}", err),
-            Error::Syndication(err) => write!(out, "{}", err),
+            Error::Syndicate(err) => write!(out, "{}", err),
         }
     }
 }

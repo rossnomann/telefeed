@@ -1,6 +1,12 @@
 use serde::Deserialize;
 use serde_yaml::Error as YamlError;
-use std::{collections::HashMap, error::Error, fmt, io::Error as IoError, path::Path};
+use std::{
+    collections::HashMap,
+    error::Error,
+    fmt,
+    io::Error as IoError,
+    path::{Path, PathBuf},
+};
 use tgbot::{Config as ApiConfig, ParseProxyError};
 use tokio::fs;
 
@@ -8,13 +14,18 @@ use tokio::fs;
 pub struct Config {
     token: String,
     proxy: Option<String>,
+    #[serde(default)]
+    pub include_feed_title: bool,
     pub redis_url: String,
     pub feeds: Feeds,
 }
 
 impl Config {
     pub async fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, ConfigError> {
-        let data = fs::read(path).await.map_err(ConfigError::ReadFile)?;
+        let path = path.as_ref();
+        let data = fs::read(path)
+            .await
+            .map_err(|err| ConfigError::ReadFile(path.to_owned(), err))?;
         Ok(serde_yaml::from_slice(&data).map_err(ConfigError::ParseYaml)?)
     }
 
@@ -47,7 +58,7 @@ pub enum FeedKind {
 pub enum ConfigError {
     ParseYaml(YamlError),
     ProxyAddress(ParseProxyError),
-    ReadFile(IoError),
+    ReadFile(PathBuf, IoError),
 }
 
 impl From<ParseProxyError> for ConfigError {
@@ -61,7 +72,7 @@ impl Error for ConfigError {
         match self {
             ConfigError::ParseYaml(err) => Some(err),
             ConfigError::ProxyAddress(err) => Some(err),
-            ConfigError::ReadFile(err) => Some(err),
+            ConfigError::ReadFile(_, err) => Some(err),
         }
     }
 }
@@ -71,7 +82,7 @@ impl fmt::Display for ConfigError {
         match self {
             ConfigError::ParseYaml(err) => write!(out, "failed to parse YAML: {}", err),
             ConfigError::ProxyAddress(err) => write!(out, "bad proxy address: {}", err),
-            ConfigError::ReadFile(err) => write!(out, "failed to read a file: {}", err),
+            ConfigError::ReadFile(path, err) => write!(out, "failed to read a file '{}': {}", path.display(), err),
         }
     }
 }
