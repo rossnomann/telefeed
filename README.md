@@ -9,7 +9,7 @@ Make sure that you have installed [Redis](https://redis.io/).
 Download binary:
 
 ```sh
-$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.2.2/telefeed-0.2.2_x86_64-linux-gnu --output telefeed
+$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.2.3/telefeed-0.2.3_x86_64-linux-gnu --output telefeed
 $ chmod +x telefeed
 ```
 
@@ -20,6 +20,7 @@ token: bottoken
 redis_url: 127.0.0.1:6379
 # proxy: 'socks5://user:password@host:port'
 # http proxies also supported
+# include_feed_title: true  # include feed title to entry link; defaults to false
 feeds:
   '@channel':  # channel username with @
     - url: http://www.darkside.ru/rss/  # url to feed
@@ -37,6 +38,11 @@ Run:
 ```
 
 # Changelog
+
+## 0.2.3 (20.02.2020)
+
+- Added `include_feed_title` option to config.
+  Set it to `true` when you need to know feed title for each entry.
 
 ## 0.2.2 (31.01.2020)
 
