@@ -7,11 +7,7 @@ use darkredis::{Connection as RedisConnection, Error as RedisError};
 use reqwest::{Client as HttpClient, Error as HttpError, StatusCode};
 use rss::{Channel as RssChannel, Error as RssError};
 use std::{error::Error, fmt, io::BufRead, sync::Arc, time::Duration};
-use tgbot::{
-    methods::SendMessage,
-    types::{ParseMode, ResponseError, ResponseParameters},
-    Api, ExecuteError,
-};
+use tgbot::{methods::SendMessage, types::ParseMode, Api, ExecuteError};
 use tokio::{sync::Mutex, time::delay_for};
 
 const PREFIX: &str = "telefeed";
@@ -149,17 +145,11 @@ async fn send_message(api: Api, channel_name: String, text: String) -> Result<()
                 );
                 current_try += 1;
                 let timeout = match err {
-                    ExecuteError::Response(ResponseError {
-                        parameters:
-                            Some(ResponseParameters {
-                                retry_after: Some(retry_after),
-                                ..
-                            }),
-                        ..
-                    }) => Duration::from_secs(retry_after as u64),
-                    _ => Duration::from_millis(100 * current_try),
-                };
-                delay_for(timeout).await
+                    ExecuteError::Response(err) => err.retry_after().map(|x| x as u64),
+                    _ => None,
+                }
+                .unwrap_or_else(|| 100 * current_try);
+                delay_for(Duration::from_secs(timeout)).await
             }
         }
     }
