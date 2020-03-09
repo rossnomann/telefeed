@@ -21,13 +21,16 @@ redis_url: 127.0.0.1:6379
 # proxy: 'socks5://user:password@host:port'
 # http proxies also supported
 # include_feed_title: true  # include feed title to entry link; defaults to false
+# request_timeout: 3600  # timeout between requests in seconds; defaults to 1200 (20 minutes)
 feeds:
   '@channel':  # channel username with @
     - url: http://www.darkside.ru/rss/  # url to feed
       kind: rss  # kind of feed: rss/atom
+      # request_timeout: 20  # override root value
   -1234567890:  # channel ID also supported
     - url: https://www.youtube.com/feeds/videos.xml?channel_id=UCX5180-7TnjjHlHaVDdqnmA
       kind: atom
+      # include_feed_title: false  # override root value
     - url: https://www.youtube.com/feeds/videos.xml?channel_id=UC2S1gZS9e8jb3Mx1Ce6YH5g
       kind: atom
 ```

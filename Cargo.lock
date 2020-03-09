@@ -44,12 +44,11 @@ dependencies = [
 
 [[package]]
 name = "atom_syndication"
-version = "0.7.0"
+version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "chrono 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "derive_builder 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "quick-xml 0.17.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -1305,7 +1304,7 @@ dependencies = [
 name = "telefeed"
 version = "0.2.3"
 dependencies = [
- "atom_syndication 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "atom_syndication 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "base64 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bytes 0.5.4 (registry+https://github.com/rust-lang/crates.io-index)",
  "chrono 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1745,7 +1744,7 @@ dependencies = [
 "checksum async-stream 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "58982858be7540a465c790b95aaea6710e5139bf8956b1d1344d014fa40100b0"
 "checksum async-stream-impl 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "393356ed99aa7bff0ac486dde592633b83ab02bd254d8c209d5b9f1d0f533480"
 "checksum async-trait 0.1.22 (registry+https://github.com/rust-lang/crates.io-index)" = "c8df72488e87761e772f14ae0c2480396810e51b2c2ade912f97f0f7e5b95e3c"
-"checksum atom_syndication 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "10ac906ce74c638baec3ac69526e68cff20fe735bab6ce8f4aedbb17451afe8f"
+"checksum atom_syndication 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "687684b9df388f7770003d6181c28acda358e4d8e0d258cff727d1f002cfa7c7"
 "checksum atty 0.2.14 (registry+https://github.com/rust-lang/crates.io-index)" = "d9b39be18770d11421cdb1b9947a45dd3f37e93092cbf377614828a319d5fee8"
 "checksum autocfg 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "1d49d90015b3c36167a20fe2810c5cd875ad504b39cff3d4eae7977e6b7c1cb2"
 "checksum autocfg 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "f8aac770f1885fd7e387acedd76065302551364496e46b3dd00860b2f8359b9d"
