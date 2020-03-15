@@ -9,7 +9,7 @@ Make sure that you have installed [Redis](https://redis.io/).
 Download binary:
 
 ```sh
-$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.2.3/telefeed-0.2.3_x86_64-linux-gnu --output telefeed
+$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.3.0/telefeed-0.3.0_x86_64-linux-gnu --output telefeed
 $ chmod +x telefeed
 ```
 
@@ -41,6 +41,12 @@ Run:
 ```
 
 # Changelog
+
+## 0.3.0 (15.03.2020)
+
+- Separate fetching of feed entries.
+- Added `request_timeout` option to root and feed config section.
+- Added `include_feed_title` option to feed config section.
 
 ## 0.2.3 (20.02.2020)
 
