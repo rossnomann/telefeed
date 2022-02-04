@@ -29,7 +29,7 @@ impl Reader {
         let rep = self.http_client.get(&self.config.url).send().await?;
         let status = rep.status();
         if !status.is_success() {
-            return Err(RequestError::BadStatus(status));
+            return Err(RequestError::BadStatus(self.config.url.clone(), status));
         }
         let reader = rep.bytes().await?.reader();
         Ok(match self.config.kind {
@@ -65,7 +65,7 @@ impl Reader {
 #[derive(Debug)]
 enum RequestError {
     Atom(AtomError),
-    BadStatus(StatusCode),
+    BadStatus(String, StatusCode),
     Feed(FeedError),
     Http(HttpError),
     Rss(RssError),
@@ -99,7 +99,7 @@ impl Error for RequestError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
             RequestError::Atom(err) => Some(err),
-            RequestError::BadStatus(_) => None,
+            RequestError::BadStatus(_, _) => None,
             RequestError::Feed(err) => Some(err),
             RequestError::Http(err) => Some(err),
             RequestError::Rss(err) => Some(err),
@@ -111,7 +111,7 @@ impl fmt::Display for RequestError {
     fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
         match self {
             RequestError::Atom(err) => write!(out, "can not parse an atom feed: {}", err),
-            RequestError::BadStatus(status) => write!(out, "a server respond with {} status", status),
+            RequestError::BadStatus(url, status) => write!(out, "{} {}", status, url),
             RequestError::Feed(err) => write!(out, "can not read a feed: {}", err),
             RequestError::Http(err) => write!(out, "an error occurred when sending an HTTP request: {}", err),
             RequestError::Rss(err) => write!(out, "can not parse an RSS feed: {}", err),
