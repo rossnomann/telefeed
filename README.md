@@ -9,7 +9,7 @@ Make sure that you have installed [Redis](https://redis.io/).
 Download binary:
 
 ```sh
-$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.3.0/telefeed-0.3.0_x86_64-linux-gnu --output telefeed
+$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.4.0/telefeed-0.4.0_x86_64-linux-gnu --output telefeed
 $ chmod +x telefeed
 ```
 
@@ -17,9 +17,7 @@ Create `config.yaml`:
 
 ```yaml
 token: bottoken
-redis_url: 127.0.0.1:6379
-# proxy: 'socks5://user:password@host:port'
-# http proxies also supported
+redis_url: redis://127.0.0.1:6379
 # include_feed_title: true  # include feed title to entry link; defaults to false
 # request_timeout: 3600  # timeout between requests in seconds; defaults to 1200 (20 minutes)
 feeds:
@@ -41,6 +39,13 @@ Run:
 ```
 
 # Changelog
+
+## 0.4.0 (04.02.2022)
+
+- Updated tgbot to 0.17 and tokio to 1.16.
+- Migrated from darkredis to redis-rs.
+- Removed proxy configuration parameter.
+- Added information about url to request error message.
 
 ## 0.3.0 (15.03.2020)
 
