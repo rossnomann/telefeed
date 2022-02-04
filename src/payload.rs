@@ -3,17 +3,14 @@ use crate::{
     config::FeedConfig,
     feed::Feed,
 };
-use std::time::Duration;
 use tgbot::{
     methods::SendMessage,
     types::{ChatId, ParseMode},
-    Api, ExecuteError,
+    Api,
 };
-use tokio::time::sleep;
 
 const PARSE_MODE: ParseMode = ParseMode::Html;
 const MAX_ENTRY_AGE: i64 = 1;
-const MAX_SEND_TRIES: u64 = 20;
 
 #[derive(Debug)]
 pub struct Payload {
@@ -55,35 +52,13 @@ impl Payload {
                 text = format!("{}: {}", feed_title, text);
             }
             let method = SendMessage::new(self.chat_id.clone(), text).parse_mode(PARSE_MODE);
-            if execute_send(&api, method).await {
-                if let Err(err) = cache.set(&cache_key).await {
-                    log::error!("Failed to mark entry as sent: {}", err)
+            match api.execute(method).await {
+                Ok(_) => {
+                    if let Err(err) = cache.set(&cache_key).await {
+                        log::error!("Failed to mark entry as sent: {}", err)
+                    }
                 }
-            }
-        }
-    }
-}
-
-async fn execute_send(api: &Api, method: SendMessage) -> bool {
-    let mut current_try = 0;
-    loop {
-        match api.execute(method.clone()).await {
-            Ok(_) => {
-                return true;
-            }
-            Err(err) => {
-                if current_try >= MAX_SEND_TRIES {
-                    log::error!("Failed to execute method {:?}: {}", method, err);
-                    return false;
-                }
-                log::info!("Failed to execute method {:?}: {}, trying again...", method, err);
-                current_try += 1;
-                let timeout = match err {
-                    ExecuteError::Response(err) => err.retry_after().map(|x| x as u64),
-                    _ => None,
-                }
-                .unwrap_or_else(|| 10 * current_try);
-                sleep(Duration::from_secs(timeout)).await
+                Err(err) => log::error!("Failed to send message: {}", err),
             }
         }
     }
