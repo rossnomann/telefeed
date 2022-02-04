@@ -3,8 +3,8 @@ use crate::{
     config::{Config, ConfigError},
     reader::Reader,
 };
-use darkredis::{Connection as RedisConnection, Error as RedisError};
 use dotenv::dotenv;
+use redis::{Client as RedisClient, RedisError};
 use reqwest::Client as HttpClient;
 use std::{env, fmt};
 use tgbot::{Api, ApiError};
@@ -21,7 +21,8 @@ pub async fn run() -> Result<(), Error> {
     };
     let api = Api::new(config.get_token())?;
     let http_client = HttpClient::new();
-    let redis_connection = RedisConnection::connect(config.redis_url()).await?;
+    let redis_client = RedisClient::open(config.redis_url())?;
+    let redis_connection = redis_client.get_async_connection().await?;
     let cache = Cache::new(redis_connection);
     let (tx, mut rx) = channel(CHANNEL_BUFFER_SIZE);
     for feed_config in config.into_feeds() {

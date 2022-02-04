@@ -1,12 +1,12 @@
 use crate::feed::Entry;
 use base64::encode as b64encode;
-use darkredis::{Connection as RedisConnection, Error as RedisError};
+use redis::{aio::Connection as RedisConnection, AsyncCommands, RedisError};
 use std::{error::Error, fmt, sync::Arc};
 use tgbot::types::ChatId;
 use tokio::sync::Mutex;
 
 const PREFIX: &str = "telefeed";
-const LIFETIME: u32 = 86400 * 7;
+const LIFETIME: usize = 86400 * 7;
 
 #[derive(Clone)]
 pub struct Cache {
@@ -27,9 +27,7 @@ impl Cache {
 
     pub async fn set(&self, key: &CacheKey) -> Result<(), CacheError> {
         let mut conn = self.connection.lock().await;
-        conn.set_and_expire_seconds(&key.0, &key.0, LIFETIME)
-            .await
-            .map_err(CacheError::Set)?;
+        conn.set_ex(&key.0, &key.0, LIFETIME).await.map_err(CacheError::Set)?;
         Ok(())
     }
 }
