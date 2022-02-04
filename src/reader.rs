@@ -4,11 +4,11 @@ use crate::{
     payload::Payload,
 };
 use atom_syndication::{Error as AtomError, Feed as AtomFeed};
-use bytes::buf::BufExt;
+use bytes::Buf;
 use reqwest::{Client as HttpClient, Error as HttpError, StatusCode};
 use rss::{Channel as RssFeed, Error as RssError};
 use std::{convert::TryFrom, error::Error, fmt};
-use tokio::{sync::mpsc::Sender, time::delay_for};
+use tokio::{sync::mpsc::Sender, time::sleep};
 
 pub struct Reader {
     config: FeedConfig,
@@ -38,7 +38,7 @@ impl Reader {
         })
     }
 
-    pub async fn run(mut self) {
+    pub async fn run(self) {
         loop {
             match self.request().await {
                 Ok(feed) => {
@@ -57,7 +57,7 @@ impl Reader {
                 }
                 Err(err) => log::error!("An error has occurred: {}", err),
             }
-            delay_for(self.config.request_timeout).await;
+            sleep(self.config.request_timeout).await;
         }
     }
 }

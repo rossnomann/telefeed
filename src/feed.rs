@@ -41,7 +41,7 @@ impl TryFrom<AtomFeed> for Feed {
         for entry in feed.entries() {
             items.push(Entry::try_from(entry.clone())?);
         }
-        let title = String::from(feed.title());
+        let title = String::from(feed.title().as_str());
         Ok(Feed { title, items })
     }
 }

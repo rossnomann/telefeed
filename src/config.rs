@@ -8,10 +8,7 @@ use std::{
     path::{Path, PathBuf},
     time::Duration,
 };
-use tgbot::{
-    types::{ChatId, Integer},
-    Config as ApiConfig, ParseProxyError,
-};
+use tgbot::types::{ChatId, Integer};
 use tokio::fs;
 
 const DEFAULT_INCLUDE_FEED_TITLE: bool = false;
@@ -20,7 +17,6 @@ const DEFAULT_REQUEST_TIMEOUT: u64 = 1200;
 #[derive(Deserialize)]
 struct RawConfig {
     token: String,
-    proxy: Option<String>,
     redis_url: String,
     feeds: HashMap<String, Vec<RawFeedConfig>>,
     include_feed_title: Option<bool>,
@@ -38,7 +34,6 @@ struct RawFeedConfig {
 #[derive(Clone, Debug)]
 pub struct Config {
     token: String,
-    proxy: Option<String>,
     redis_url: String,
     feeds: Vec<FeedConfig>,
 }
@@ -72,18 +67,13 @@ impl Config {
         }
         Ok(Self {
             token: raw.token,
-            proxy: raw.proxy,
             redis_url: raw.redis_url,
             feeds,
         })
     }
 
-    pub fn get_api_config(&self) -> Result<ApiConfig, ConfigError> {
-        let mut config = ApiConfig::new(self.token.clone());
-        if let Some(ref proxy) = self.proxy {
-            config = config.proxy(proxy.clone())?;
-        }
-        Ok(config)
+    pub fn get_token(&self) -> &str {
+        &self.token
     }
 
     pub fn redis_url(&self) -> &str {
@@ -115,21 +105,13 @@ pub enum FeedKind {
 #[derive(Debug)]
 pub enum ConfigError {
     ParseYaml(YamlError),
-    ProxyAddress(ParseProxyError),
     ReadFile(PathBuf, IoError),
-}
-
-impl From<ParseProxyError> for ConfigError {
-    fn from(err: ParseProxyError) -> Self {
-        ConfigError::ProxyAddress(err)
-    }
 }
 
 impl Error for ConfigError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
             ConfigError::ParseYaml(err) => Some(err),
-            ConfigError::ProxyAddress(err) => Some(err),
             ConfigError::ReadFile(_, err) => Some(err),
         }
     }
@@ -139,7 +121,6 @@ impl fmt::Display for ConfigError {
     fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
         match self {
             ConfigError::ParseYaml(err) => write!(out, "failed to parse YAML: {}", err),
-            ConfigError::ProxyAddress(err) => write!(out, "bad proxy address: {}", err),
             ConfigError::ReadFile(path, err) => write!(out, "failed to read a file '{}': {}", path.display(), err),
         }
     }

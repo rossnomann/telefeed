@@ -19,8 +19,7 @@ pub async fn run() -> Result<(), Error> {
         Some(path) => Config::from_file(path).await?,
         None => return Err(Error::ConfigPathMissing),
     };
-    let api_config = config.get_api_config()?;
-    let api = Api::new(api_config)?;
+    let api = Api::new(config.get_token())?;
     let http_client = HttpClient::new();
     let redis_connection = RedisConnection::connect(config.redis_url()).await?;
     let cache = Cache::new(redis_connection);

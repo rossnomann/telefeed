@@ -9,7 +9,7 @@ use tgbot::{
     types::{ChatId, ParseMode},
     Api, ExecuteError,
 };
-use tokio::time::delay_for;
+use tokio::time::sleep;
 
 const PARSE_MODE: ParseMode = ParseMode::Html;
 const MAX_ENTRY_AGE: i64 = 1;
@@ -83,7 +83,7 @@ async fn execute_send(api: &Api, method: SendMessage) -> bool {
                     _ => None,
                 }
                 .unwrap_or_else(|| 10 * current_try);
-                delay_for(Duration::from_secs(timeout)).await
+                sleep(Duration::from_secs(timeout)).await
             }
         }
     }
