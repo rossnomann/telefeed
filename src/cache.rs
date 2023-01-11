@@ -1,5 +1,5 @@
 use crate::feed::Entry;
-use base64::encode as b64encode;
+use base64::{engine::general_purpose::STANDARD_NO_PAD as BASE64_ENGINE, Engine};
 use redis::{aio::Connection as RedisConnection, AsyncCommands, RedisError};
 use std::{error::Error, fmt, sync::Arc};
 use tgbot::types::ChatId;
@@ -39,7 +39,7 @@ impl CacheKey {
         Self(format!(
             "{}:{}",
             PREFIX,
-            b64encode(&format!("{}{}", chat_id, entry.url()))
+            BASE64_ENGINE.encode(format!("{chat_id}{url}", url = entry.url()))
         ))
     }
 }
@@ -53,8 +53,8 @@ pub enum CacheError {
 impl fmt::Display for CacheError {
     fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            CacheError::Exists(err) => write!(out, "can not check whether cache key exists: {}", err),
-            CacheError::Set(err) => write!(out, "can not set cache key: {}", err),
+            CacheError::Exists(err) => write!(out, "can not check whether cache key exists: {err}"),
+            CacheError::Set(err) => write!(out, "can not set cache key: {err}"),
         }
     }
 }

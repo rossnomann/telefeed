@@ -5,17 +5,17 @@ authors = ["Ross Nomann <rossnomann@protonmail.com>"]
 edition = "2021"
 
 [dependencies]
-atom_syndication = "0.11.0"
-base64 = "0.13.0"
+atom_syndication = "0.12.0"
+base64 = "0.21.0"
 bytes = "1.1.0"
 chrono = "0.4.19"
 dotenv = "0.15.0"
-env_logger = "0.9.0"
+env_logger = "0.10.0"
 log = "0.4.14"
-redis = { version = "0.21.5", features = ["tokio-comp"] }
+redis = { version = "0.22.2", features = ["tokio-comp"] }
 reqwest = "0.11.9"
 rss = "2.0.0"
 serde = "1.0.136"
-serde_yaml = "0.8.23"
-tgbot = "0.17.0"
+serde_yaml = "0.9.16"
+tgbot = "0.18.0"
 tokio = { version = "1.16.1", features = ["macros", "rt-multi-thread"] }

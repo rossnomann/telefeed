@@ -63,10 +63,10 @@ impl From<RedisError> for Error {
 impl fmt::Display for Error {
     fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::Api(err) => write!(out, "Can not create a Telegram Bot API: {}", err),
-            Error::Config(err) => write!(out, "Configuration error: {}", err),
+            Error::Api(err) => write!(out, "Can not create a Telegram Bot API: {err}"),
+            Error::Config(err) => write!(out, "Configuration error: {err}"),
             Error::ConfigPathMissing => write!(out, "You need to provide a path to config"),
-            Error::Redis(err) => write!(out, "Redis error: {}", err),
+            Error::Redis(err) => write!(out, "Redis error: {err}"),
         }
     }
 }

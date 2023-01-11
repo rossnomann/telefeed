@@ -49,7 +49,7 @@ impl Payload {
             };
             let mut text = entry.as_html();
             if self.config.include_feed_title {
-                text = format!("{}: {}", feed_title, text);
+                text = format!("{feed_title}: {text}");
             }
             let method = SendMessage::new(self.chat_id.clone(), text).parse_mode(PARSE_MODE);
             match api.execute(method).await {

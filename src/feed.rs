@@ -68,7 +68,7 @@ impl Error for FeedError {
 impl fmt::Display for FeedError {
     fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            FeedError::Entry(err) => write!(out, "can not read entry: {}", err),
+            FeedError::Entry(err) => write!(out, "can not read entry: {err}"),
         }
     }
 }

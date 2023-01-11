@@ -110,11 +110,11 @@ impl Error for RequestError {
 impl fmt::Display for RequestError {
     fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            RequestError::Atom(err) => write!(out, "can not parse an atom feed: {}", err),
-            RequestError::BadStatus(url, status) => write!(out, "{} {}", status, url),
-            RequestError::Feed(err) => write!(out, "can not read a feed: {}", err),
-            RequestError::Http(err) => write!(out, "an error occurred when sending an HTTP request: {}", err),
-            RequestError::Rss(err) => write!(out, "can not parse an RSS feed: {}", err),
+            RequestError::Atom(err) => write!(out, "can not parse an atom feed: {err}"),
+            RequestError::BadStatus(url, status) => write!(out, "{status} {url}"),
+            RequestError::Feed(err) => write!(out, "can not read a feed: {err}"),
+            RequestError::Http(err) => write!(out, "an error occurred when sending an HTTP request: {err}"),
+            RequestError::Rss(err) => write!(out, "can not parse an RSS feed: {err}"),
         }
     }
 }

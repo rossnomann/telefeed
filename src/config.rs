@@ -120,8 +120,10 @@ impl Error for ConfigError {
 impl fmt::Display for ConfigError {
     fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            ConfigError::ParseYaml(err) => write!(out, "failed to parse YAML: {}", err),
-            ConfigError::ReadFile(path, err) => write!(out, "failed to read a file '{}': {}", path.display(), err),
+            ConfigError::ParseYaml(err) => write!(out, "failed to parse YAML: {err}"),
+            ConfigError::ReadFile(path, err) => {
+                write!(out, "failed to read a file '{err}': {path}", path = path.display())
+            }
         }
     }
 }
