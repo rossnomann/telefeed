@@ -122,7 +122,7 @@ impl TryFrom<AtomEntry> for Entry {
         let link = &links[0];
         let title = link.title().unwrap_or_else(|| entry.title());
         if links.is_empty() {
-            return Err(EntryError::NoUrl);
+            return Err(EntryError::MissingUrl);
         }
         let published = entry.published().unwrap_or_else(|| entry.updated());
         Ok(Entry::new(link.href(), title, *published))
@@ -133,13 +133,16 @@ impl TryFrom<RssEntry> for Entry {
     type Error = EntryError;
 
     fn try_from(entry: RssEntry) -> Result<Self, Self::Error> {
-        let title = entry.title().ok_or(EntryError::NoTitle)?;
-        let url = entry.link().ok_or(EntryError::NoUrl)?;
+        let title = entry.title().ok_or(EntryError::MissingTitle)?;
+        let url = entry.link().ok_or(EntryError::MissingUrl)?;
         let published = match entry.pub_date().map(DateTime::parse_from_rfc2822) {
             Some(Ok(published)) => published,
             _ => {
                 // let's assume that item published now
-                DateTime::from_utc(Utc::now().naive_utc(), FixedOffset::east(0))
+                DateTime::from_naive_utc_and_offset(
+                    Utc::now().naive_utc(),
+                    FixedOffset::east_opt(0).ok_or(EntryError::CreateTzOffset)?,
+                )
             }
         };
         Ok(Entry::new(url, title, published))
@@ -148,8 +151,9 @@ impl TryFrom<RssEntry> for Entry {
 
 #[derive(Clone, Copy, Debug)]
 pub enum EntryError {
-    NoTitle,
-    NoUrl,
+    CreateTzOffset,
+    MissingTitle,
+    MissingUrl,
 }
 
 impl Error for EntryError {}
@@ -157,8 +161,9 @@ impl Error for EntryError {}
 impl fmt::Display for EntryError {
     fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            EntryError::NoTitle => write!(out, "title is missing"),
-            EntryError::NoUrl => write!(out, "url is missing"),
+            EntryError::CreateTzOffset => write!(out, "could not create a tz offset"),
+            EntryError::MissingTitle => write!(out, "title is missing"),
+            EntryError::MissingUrl => write!(out, "url is missing"),
         }
     }
 }

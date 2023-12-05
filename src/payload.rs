@@ -4,9 +4,8 @@ use crate::{
     feed::Feed,
 };
 use tgbot::{
-    methods::SendMessage,
-    types::{ChatId, ParseMode},
-    Api,
+    api::Client,
+    types::{ChatId, ParseMode, SendMessage},
 };
 
 const PARSE_MODE: ParseMode = ParseMode::Html;
@@ -20,7 +19,7 @@ pub struct Payload {
 }
 
 impl Payload {
-    pub async fn publish(self, api: Api, cache: Cache) {
+    pub async fn publish(self, client: Client, cache: Cache) {
         let feed_title = self.feed.title();
         let entries = self.feed.entries();
         log::info!("Got {} entries for {} feed", entries.len(), feed_title);
@@ -51,8 +50,8 @@ impl Payload {
             if self.config.include_feed_title {
                 text = format!("{feed_title}: {text}");
             }
-            let method = SendMessage::new(self.chat_id.clone(), text).parse_mode(PARSE_MODE);
-            match api.execute(method).await {
+            let method = SendMessage::new(self.chat_id.clone(), text).with_parse_mode(PARSE_MODE);
+            match client.execute(method).await {
                 Ok(_) => {
                     if let Err(err) = cache.set(&cache_key).await {
                         log::error!("Failed to mark entry as sent: {}", err)

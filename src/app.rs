@@ -3,11 +3,11 @@ use crate::{
     config::{Config, ConfigError},
     reader::Reader,
 };
-use dotenv::dotenv;
+use dotenvy::dotenv;
 use redis::{Client as RedisClient, RedisError};
 use reqwest::Client as HttpClient;
 use std::{env, fmt};
-use tgbot::{Api, ApiError};
+use tgbot::api::{Client, ClientError};
 use tokio::sync::mpsc::channel;
 
 const CHANNEL_BUFFER_SIZE: usize = 100;
@@ -19,7 +19,7 @@ pub async fn run() -> Result<(), Error> {
         Some(path) => Config::from_file(path).await?,
         None => return Err(Error::ConfigPathMissing),
     };
-    let api = Api::new(config.get_token())?;
+    let client = Client::new(config.get_token())?;
     let http_client = HttpClient::new();
     let redis_client = RedisClient::open(config.redis_url())?;
     let redis_connection = redis_client.get_async_connection().await?;
@@ -30,21 +30,21 @@ pub async fn run() -> Result<(), Error> {
         tokio::spawn(reader.run());
     }
     while let Some(payload) = rx.recv().await {
-        tokio::spawn(payload.publish(api.clone(), cache.clone()));
+        tokio::spawn(payload.publish(client.clone(), cache.clone()));
     }
     Ok(())
 }
 
 pub enum Error {
-    Api(ApiError),
+    Client(ClientError),
     Config(ConfigError),
     ConfigPathMissing,
     Redis(RedisError),
 }
 
-impl From<ApiError> for Error {
-    fn from(err: ApiError) -> Self {
-        Error::Api(err)
+impl From<ClientError> for Error {
+    fn from(err: ClientError) -> Self {
+        Error::Client(err)
     }
 }
 
@@ -63,7 +63,7 @@ impl From<RedisError> for Error {
 impl fmt::Display for Error {
     fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::Api(err) => write!(out, "Can not create a Telegram Bot API: {err}"),
+            Error::Client(err) => write!(out, "Can not create a Telegram Bot API client: {err}"),
             Error::Config(err) => write!(out, "Configuration error: {err}"),
             Error::ConfigPathMissing => write!(out, "You need to provide a path to config"),
             Error::Redis(err) => write!(out, "Redis error: {err}"),
