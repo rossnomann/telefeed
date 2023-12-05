@@ -9,7 +9,7 @@ Make sure that you have installed [Redis](https://redis.io/).
 Download binary:
 
 ```sh
-$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.4.0/telefeed-0.4.0_x86_64-linux-gnu --output telefeed
+$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.5.0/telefeed-0.5.0_x86_64-linux-gnu --output telefeed
 $ chmod +x telefeed
 ```
 
