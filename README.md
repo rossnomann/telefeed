@@ -40,6 +40,14 @@ Run:
 
 # Changelog
 
+## 0.5.0 (05.12.2023)
+
+- Updated bytes to 1.5.
+- dotenv replaced by dotenvy.
+- Updated redis to 0.23.
+- Updated tgbot to 0.19.
+- Updated tokio to 1.34.
+
 ## 0.4.0 (04.02.2022)
 
 - Updated tgbot to 0.17 and tokio to 1.16.
