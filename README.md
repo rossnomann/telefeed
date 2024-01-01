@@ -9,7 +9,7 @@ Make sure that you have installed [Redis](https://redis.io/).
 Download binary:
 
 ```sh
-$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.5.0/telefeed-0.5.0_x86_64-linux-gnu --output telefeed
+$ curl -L https://github.com/rossnomann/telefeed/releases/download/0.6.0/telefeed-0.6.0_x86_64-linux-gnu --output telefeed
 $ chmod +x telefeed
 ```
 
@@ -39,6 +39,12 @@ Run:
 ```
 
 # Changelog
+
+## 0.6.0 (01.01.2024)
+
+- Updated redis to 0.24.
+- Updated tgbot to 0.20.
+- Updated tokio to 1.35.
 
 ## 0.5.0 (05.12.2023)
 

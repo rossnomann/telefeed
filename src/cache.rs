@@ -6,7 +6,7 @@ use tgbot::types::ChatId;
 use tokio::sync::Mutex;
 
 const PREFIX: &str = "telefeed";
-const LIFETIME: usize = 86400 * 7;
+const LIFETIME: u64 = 86400 * 7;
 
 #[derive(Clone)]
 pub struct Cache {
