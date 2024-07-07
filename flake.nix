@@ -11,14 +11,18 @@
       let
         overlays = [ inputs.rust-overlay.overlays.default ];
         pkgs = import inputs.nixpkgs { inherit system overlays; };
+        jq = pkgs.jq;
         openssl = pkgs.openssl;
+        patchelf = pkgs.patchelf;
         pkg-config = pkgs.pkg-config;
         redis = pkgs.redis;
       in
       {
         devShells.default = pkgs.mkShell {
           buildInputs = [
+            jq
             openssl
+            patchelf
             pkg-config
             (pkgs.lib.hiPrio (
               pkgs.rust-bin.stable.latest.minimal.override {
