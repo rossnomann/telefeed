@@ -1,6 +1,6 @@
 use crate::feed::Entry;
 use base64::{engine::general_purpose::STANDARD_NO_PAD as BASE64_ENGINE, Engine};
-use redis::{aio::Connection as RedisConnection, AsyncCommands, RedisError};
+use redis::{aio::MultiplexedConnection as RedisConnection, AsyncCommands, RedisError};
 use std::{error::Error, fmt, sync::Arc};
 use tgbot::types::ChatId;
 use tokio::sync::Mutex;

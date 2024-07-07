@@ -1,5 +1,4 @@
 use serde::Deserialize;
-use serde_yaml::Error as YamlError;
 use std::{
     collections::HashMap,
     error::Error,
@@ -10,6 +9,7 @@ use std::{
 };
 use tgbot::types::{ChatId, Integer};
 use tokio::fs;
+use toml::de::Error as TomlError;
 
 const DEFAULT_INCLUDE_FEED_TITLE: bool = false;
 const DEFAULT_REQUEST_TIMEOUT: u64 = 1200;
@@ -41,10 +41,10 @@ pub struct Config {
 impl Config {
     pub async fn from_file<P: AsRef<Path>>(path: P) -> Result<Self, ConfigError> {
         let path = path.as_ref();
-        let data = fs::read(path)
+        let data = fs::read_to_string(path)
             .await
             .map_err(|err| ConfigError::ReadFile(path.to_owned(), err))?;
-        let raw: RawConfig = serde_yaml::from_slice(&data).map_err(ConfigError::ParseYaml)?;
+        let raw: RawConfig = toml::from_str(&data).map_err(ConfigError::ParseToml)?;
         let default_include_feed_title = raw.include_feed_title.unwrap_or(DEFAULT_INCLUDE_FEED_TITLE);
         let default_request_timeout = raw.request_timeout.unwrap_or(DEFAULT_REQUEST_TIMEOUT);
         let mut feeds = Vec::new();
@@ -104,14 +104,14 @@ pub enum FeedKind {
 
 #[derive(Debug)]
 pub enum ConfigError {
-    ParseYaml(YamlError),
+    ParseToml(TomlError),
     ReadFile(PathBuf, IoError),
 }
 
 impl Error for ConfigError {
     fn source(&self) -> Option<&(dyn Error + 'static)> {
         match self {
-            ConfigError::ParseYaml(err) => Some(err),
+            ConfigError::ParseToml(err) => Some(err),
             ConfigError::ReadFile(_, err) => Some(err),
         }
     }
@@ -120,7 +120,7 @@ impl Error for ConfigError {
 impl fmt::Display for ConfigError {
     fn fmt(&self, out: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            ConfigError::ParseYaml(err) => write!(out, "failed to parse YAML: {err}"),
+            ConfigError::ParseToml(err) => write!(out, "failed to parse TOML: {err}"),
             ConfigError::ReadFile(path, err) => {
                 write!(out, "failed to read a file '{err}': {path}", path = path.display())
             }

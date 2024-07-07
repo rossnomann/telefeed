@@ -22,7 +22,7 @@ pub async fn run() -> Result<(), Error> {
     let client = Client::new(config.get_token())?;
     let http_client = HttpClient::new();
     let redis_client = RedisClient::open(config.redis_url())?;
-    let redis_connection = redis_client.get_async_connection().await?;
+    let redis_connection = redis_client.get_multiplexed_async_connection().await?;
     let cache = Cache::new(redis_connection);
     let (tx, mut rx) = channel(CHANNEL_BUFFER_SIZE);
     for feed_config in config.into_feeds() {
