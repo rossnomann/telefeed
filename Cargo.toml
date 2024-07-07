@@ -1,6 +1,6 @@
 [package]
 name = "telefeed"
-version = "0.5.0"
+version = "0.7.0"
 authors = ["Ross Nomann <rossnomann@protonmail.com>"]
 edition = "2021"
 
