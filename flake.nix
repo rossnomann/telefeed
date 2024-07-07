@@ -13,8 +13,7 @@
         pkgs = import inputs.nixpkgs { inherit system overlays; };
         openssl = pkgs.openssl;
         pkg-config = pkgs.pkg-config;
-        rust = pkgs.rust-bin.stable.latest.default;
-        rust-analyzer = pkgs.rust-analyzer;
+        redis = pkgs.redis;
       in
       {
         devShells.default = pkgs.mkShell {
@@ -38,12 +37,12 @@
                 ];
               }
             ))
+            redis
           ];
           shellHook = ''
-            export CARGO_HOME="$PWD/.cargo"
+            export CARGO_HOME="$PWD/dev/data/cargo"
             export PATH="$CARGO_HOME/bin:$PATH"
-            mkdir -p .cargo
-            echo '*' > .cargo/.gitignore
+            mkdir -p $CARGO_HOME
           '';
         };
       }

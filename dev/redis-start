@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+redis-cli ping
+
+if [ $? -ne 0 ]; then
+    redis_home=dev/data/redis
+    mkdir -p $redis_home
+    redis-server --daemonize yes --dir $redis_home
+fi
