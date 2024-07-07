@@ -21,8 +21,23 @@
           buildInputs = [
             openssl
             pkg-config
-            rust
-            rust-analyzer
+            (pkgs.lib.hiPrio (
+              pkgs.rust-bin.stable.latest.minimal.override {
+                extensions = [
+                  "rust-docs"
+                  "clippy"
+                ];
+              }
+            ))
+            (pkgs.rust-bin.selectLatestNightlyWith (
+              toolchain:
+              toolchain.minimal.override {
+                extensions = [
+                  "rust-analyzer"
+                  "rustfmt"
+                ];
+              }
+            ))
           ];
           shellHook = ''
             export CARGO_HOME="$PWD/.cargo"
