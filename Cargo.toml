@@ -2,7 +2,7 @@
 name = "telefeed"
 version = "0.7.0"
 authors = ["Ross Nomann <rossnomann@protonmail.com>"]
-edition = "2021"
+edition = "2024"
 
 [dependencies]
 atom_syndication = "0.12.7"

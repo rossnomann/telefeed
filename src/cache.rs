@@ -27,7 +27,7 @@ impl Cache {
 
     pub async fn set(&self, key: &CacheKey) -> Result<(), CacheError> {
         let mut conn = self.connection.lock().await;
-        conn.set_ex(&key.0, &key.0, LIFETIME).await.map_err(CacheError::Set)?;
+        let _: () = conn.set_ex(&key.0, &key.0, LIFETIME).await.map_err(CacheError::Set)?;
         Ok(())
     }
 }
