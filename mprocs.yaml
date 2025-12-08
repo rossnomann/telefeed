@@ -1,0 +1,4 @@
+procs:
+  redis:
+    autostart: true
+    shell: 'redis-server --dir data'

@@ -40,6 +40,12 @@ Run:
 
 ## Development
 
+To run the bot use `cargo run -- data/config.toml`.
+Don't forget to create the config.
+
+Before commit: `pre-commit install`.
+Or run manually: `pre-commit run -a`.
+
 ### NixOS
 
 Make sure that you have enabled nix flakes and installed direnv.
@@ -51,13 +57,19 @@ direnv allow
 
 Command for rust analyzer LSP config:
 
-```
+```sh
 nix develop /path/to/project --command rust-analyzer
 ```
 
-To start/stop redis use `./dev/redis-start` and `./dev/redis-stop`.
+To start/stop redis use `mprocs`.
 
-To build a release binary use `./dev/build`.
+To build a release binary use `just` or `just nixos-build`.
+
+### Non-NixOS
+
+Make sure that you have installed Redis if you need to run the bot.
+
+To build a release binary use `cargo build --release`.
 
 ## Changelog
 

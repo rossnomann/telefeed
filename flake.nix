@@ -11,19 +11,19 @@
       let
         overlays = [ inputs.rust-overlay.overlays.default ];
         pkgs = import inputs.nixpkgs { inherit system overlays; };
-        jq = pkgs.jq;
-        openssl = pkgs.openssl;
-        patchelf = pkgs.patchelf;
-        pkg-config = pkgs.pkg-config;
-        redis = pkgs.redis;
       in
       {
         devShells.default = pkgs.mkShell {
           buildInputs = [
-            jq
-            openssl
-            patchelf
-            pkg-config
+            pkgs.jq
+            pkgs.just
+            pkgs.mprocs
+            pkgs.nixfmt
+            pkgs.openssl
+            pkgs.patchelf
+            pkgs.pkg-config
+            pkgs.pre-commit
+            pkgs.redis
             (pkgs.lib.hiPrio (
               pkgs.rust-bin.stable.latest.minimal.override {
                 extensions = [
@@ -41,12 +41,12 @@
                 ];
               }
             ))
-            redis
           ];
           shellHook = ''
-            export CARGO_HOME="$PWD/dev/data/cargo"
+            export CARGO_HOME="$PWD/.cargo"
             export PATH="$CARGO_HOME/bin:$PATH"
             mkdir -p $CARGO_HOME
+            echo '*' > .cargo/.gitignore
           '';
         };
       }
