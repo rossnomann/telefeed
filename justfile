@@ -11,6 +11,8 @@ nixos-build:
     cp target/release/telefeed $build_path
     patchelf --set-interpreter $interpreter $build_path
     echo $build_path
+run:
+    cargo run -- data/config.toml
 format:
     nixfmt flake.nix
     cargo fmt

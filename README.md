@@ -40,7 +40,7 @@ Run:
 
 ## Development
 
-To run the bot use `cargo run -- data/config.toml`.
+To run the bot use `cargo run -- data/config.toml` or `just run`.
 Don't forget to create the config.
 
 Before commit: `pre-commit install`.
