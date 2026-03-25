@@ -43,6 +43,10 @@ impl Payload {
                     log::info!("{:?} not sent, continue", entry);
                 }
                 Err(err) => {
+                    if err.is_io_error() {
+                        log::info!("{:?} not sent, an io error has occurred: {}", entry, err);
+                        continue;
+                    }
                     log::error!("Failed to check whether entry was sent: {}; send entry anyway", err);
                 }
             };

@@ -1,6 +1,6 @@
 use crate::feed::Entry;
 use base64::{Engine, engine::general_purpose::STANDARD_NO_PAD as BASE64_ENGINE};
-use redis::{AsyncCommands, RedisError, aio::MultiplexedConnection as RedisConnection};
+use redis::{AsyncCommands, RedisError, aio::ConnectionManager as RedisConnection};
 use std::{error::Error, fmt, sync::Arc};
 use tgbot::types::ChatId;
 use tokio::sync::Mutex;
@@ -48,6 +48,16 @@ impl CacheKey {
 pub enum CacheError {
     Exists(RedisError),
     Set(RedisError),
+}
+
+impl CacheError {
+    pub fn is_io_error(&self) -> bool {
+        let inner = match self {
+            Self::Exists(err) => err,
+            Self::Set(err) => err,
+        };
+        inner.is_io_error()
+    }
 }
 
 impl fmt::Display for CacheError {
