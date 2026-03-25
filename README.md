@@ -73,6 +73,20 @@ To build a release binary use `cargo build --release`.
 
 ## Changelog
 
+### 0.7.1 (25.03.2026)
+
+- A partial fix for duplicates:
+    - Reconnect if a redis connection has broken.
+    - Do not send anything if an io error has occurred.
+- Updated bytes to 1.11.1.
+- Updated chrono to 0.4.44.
+- Updated env_logger to 0.11.10.
+- Updated redis to 1.1.0.
+- Updated reqwest to 0.13.2.
+- Updated tgbot to 0.43.0.
+- Updated tokio to 1.50.0.
+- Updated toml to 1.1.0.
+
 ### 0.7.0 (07.07.2024)
 
 - Breaking: Changed configuration file format from YAML to TOML.

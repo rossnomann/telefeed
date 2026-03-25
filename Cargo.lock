@@ -1785,7 +1785,7 @@ dependencies = [
 
 [[package]]
 name = "telefeed"
-version = "0.7.0"
+version = "0.7.1"
 dependencies = [
  "atom_syndication",
  "base64",
